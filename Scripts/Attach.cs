@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Valve.VR;
-using NodeInteractions;
 
 /*
  * Attach is a functionality of the PointerType tagged objects.
@@ -23,8 +22,7 @@ public class Attach : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        //TMPInput.text = "NULL";
+    { 
         currentHand = FindObjectOfType<Valve.VR.InteractionSystem.Hand>();
         attachSound = GetComponent<AudioSource>();
     }
@@ -38,30 +36,34 @@ public class Attach : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.GetComponent<Rigidbody>() != null && //Checking for the other objects rigidbody
-            collision.gameObject.tag == "NodeType") //Checking for Node tag
-            //collision.transform.root.parent != transform.root.parent) //Checking that the pointer doesn't belong to it's current node
+            collision.gameObject.tag == "NodeType" && hasJoint == false) //&& Checking for Node tag
         {
             FixedJoint fj = gameObject.AddComponent<FixedJoint>(); //initialize FixedJoint
             fj.connectedBody = collision.gameObject.GetComponent<Rigidbody>(); //Attach FixedJoint to other rigidbody
 
             currentHand.TriggerHapticPulse(10000);
-
-            TextMeshPro otherText = collision.transform.Find("dataText").GetComponent<TextMeshPro>();
-            TMPInput.text = otherText.text; //Change the text displayed on the TMPInput object
-
             attachSound.Play();
+            hasJoint = true;
         }
     }
 
+    /*
+     * OnCollisionStay finds the correct input from the node being collided with, and updates the text on its parents node.
+     */
     private void OnCollisionStay(Collision collision)
     {
-        hasJoint = true;
+        TextMeshPro otherText = collision.transform.Find("dataText").GetComponent<TextMeshPro>();
+        TMPInput.text = otherText.text; //Change the text displayed on the TMPInput object
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        //gameObject.transform.SetParent(null);
-        //hasJoint = false;
-        //TMPInput.text = "NULL";     
+        if(TMPInput.text != null)
+        {
+            TMPInput.text = "NULL";
+            hasJoint = false;
+            Debug.Log("OnCollisionExit was called");
+        }
+
     }
 }

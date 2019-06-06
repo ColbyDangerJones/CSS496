@@ -41,8 +41,8 @@ public class SpawnOnHover : MonoBehaviour
             if (rigidbody != null)
                 rigidbody.isKinematic = false;
 
-            Vector3 initialScale = Vector3.one * 0.01f;
-            Vector3 targetScale = Vector3.one * 0.622f;
+            Vector3 initialScale = Vector3.one * 1f;
+            Vector3 targetScale = Vector3.one * 1f;
 
             float startTime = Time.time;
             float overTime = 0.8f;

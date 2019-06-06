@@ -15,6 +15,8 @@ using TMPro;
 public class AttachFloppy : MonoBehaviour
 {
     public TextMeshPro Data;
+    public GameObject ToDisplay;
+    public AudioSource Song;
 
     public int BreakForce = 5;
     public int BreakTorque = 5;
@@ -23,9 +25,35 @@ public class AttachFloppy : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<Rigidbody>() != null && collision.gameObject.tag == "NodeType")
         {
+            collision.transform.Find("dataText").gameObject.SetActive(true);
             TextMeshPro other = collision.transform.Find("dataText").GetComponent<TextMeshPro>();
             other.text = this.Data.text; //collision.gameObject.GetComponent<TextMesh>().name;
+            collision.transform.Find("FloppyDiskMesh").gameObject.SetActive(true);
+            collision.transform.Find("prevText").gameObject.SetActive(true);
+            collision.transform.Find("nextText").gameObject.SetActive(true);
+            collision.transform.Find("Pointer Prev").gameObject.SetActive(true);
+            collision.transform.Find("Pointer Next").gameObject.SetActive(true);
             Destroy(gameObject);
+        }
+
+        else if (collision.gameObject.GetComponent<Rigidbody>() != null && collision.gameObject.tag == "ScreenNode")
+        {
+            if (collision.gameObject.GetComponent<AudioSource>() != null)
+            {
+                AudioSource prevSong = collision.gameObject.GetComponent<AudioSource>();
+                prevSong.Pause();
+            }
+
+            if (Song != null)
+                Song.Play(3);
+
+            if (ToDisplay != null)
+                ToDisplay.SetActive(true);
+
+
+
+            Destroy(gameObject);
+
             collision.transform.Find("FloppyDiskMesh").gameObject.SetActive(true);
         }
     }
